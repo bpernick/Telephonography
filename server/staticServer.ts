@@ -1,6 +1,35 @@
-import { Application, send } from 'https://deno.land/x/oak/mod.ts'
-import * as path from 'https://deno.land/std/path/mod.ts'
-;(async () => {
+import { 
+  Application, 
+  send, 
+  path, 
+  graphql,
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+} from './deps.ts'
+
+import {Greeter} from './types.ts'
+
+var schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'RootQueryType',
+    fields: {
+      hello: {
+        type: GraphQLString,
+        resolve() {
+          return 'world';
+        },
+      },
+    },
+  }),
+});;
+
+var root = { hello: () => 'Hello world!' };
+
+graphql(schema, '{ hello }', root).then((response: Greeter) => {
+  console.log(response);
+});
+(async () => {
   const app = new Application()
 
   app.use(async ctx => {
