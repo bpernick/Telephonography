@@ -6,6 +6,7 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
+  config,
 } from './deps.ts'
 
 import {Greeter} from './types.ts'
@@ -27,7 +28,7 @@ var schema = new GraphQLSchema({
 var root = { hello: () => 'Hello world!' };
 
 graphql(schema, '{ hello }', root).then((response: Greeter) => {
-  console.log(response);
+  console.log(response, Deno.env.get('DENO_ENV'));
 });
 (async () => {
   const app = new Application()

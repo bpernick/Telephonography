@@ -16,7 +16,7 @@
     "clean-dist": "rimraf dist/* server/static/*",
     "start": "run-s clean-build-copy:dev run-and-open",
     "run-and-open": "run-p run-server open-browser",
-    "run-server": "deno run --allow-read --allow-net server/staticServer.ts",
+    "run-server": "deno run --allow-read --allow-net --allow-env server/staticServer.ts",
     "open-browser": "node scripts/open-browser.js",
     "lint:fix": "eslint src/ --ext .tsx,.ts,.js --fix",
     "typecheck": "tsc"
