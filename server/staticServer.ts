@@ -8,7 +8,7 @@ import {
   GraphQLString,
   config,
 } from './deps.ts'
-
+import "https://deno.land/x/dotenv/load.ts"
 import {Greeter} from './types.ts'
 
 var schema = new GraphQLSchema({
