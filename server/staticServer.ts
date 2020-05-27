@@ -45,6 +45,7 @@ router
   .get('/graphql', async (ctx) => {
     const response: Greeter = await graphql(schema, '{ hello }', root)
     console.log(response);
+    ctx.response.headers.set('Content-Type', 'application/json');
     ctx.response.body = response;
   });
 
