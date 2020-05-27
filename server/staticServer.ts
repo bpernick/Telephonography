@@ -1,12 +1,12 @@
 import { 
-  Application, 
+  Application,
+  Router, 
   send, 
   path, 
   graphql,
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
-  config,
 } from './deps.ts'
 import "https://deno.land/x/dotenv/load.ts"
 import {Greeter} from './types.ts'
@@ -27,20 +27,27 @@ var schema = new GraphQLSchema({
 
 var root = { hello: () => 'Hello world!' };
 
-graphql(schema, '{ hello }', root).then((response: Greeter) => {
-  console.log(response, Deno.env.get('DENO_ENV'));
-});
-(async () => {
-  const app = new Application()
 
-  app.use(async ctx => {
-    const filePath = path.join(Deno.cwd(), 'server', 'static')
-    await send(ctx, ctx.request.url.pathname, {
-      root: filePath,
-      index: 'index.html',
-    })
+
+const router = new Router();
+const app = new Application()
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+app.use(async ctx => {
+  const filePath = path.join(Deno.cwd(), 'server', 'static')
+  await send(ctx, ctx.request.url.pathname, {
+    root: filePath,
+    index: 'index.html',
   })
+})
+router
+  .get('/graphql', async (ctx) => {
+    const response: Greeter = await graphql(schema, '{ hello }', root)
+    console.log(response);
+    ctx.response.body = response;
+  });
 
-  console.log('server is runing on: http://localhost:8000')
-  await app.listen({ port: 8000 })
-})()
+console.log('server is runing on: http://localhost:8000')
+await app.listen({ port: 8000 })
+
