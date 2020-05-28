@@ -4,9 +4,9 @@ import graphql from 'graphql'
 export default function App(): JSX.Element {
   const [hello, setHello] = useState('')
   useEffect (() => {
-    fetch('/graphql?query={hello}')
+    fetch('/graphql?query={hello{cruel}}')
     .then(response => response.json())
-    .then((response) => {
+    .then(response => {
       console.log(response)
     })
   })

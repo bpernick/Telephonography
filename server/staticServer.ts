@@ -1,7 +1,8 @@
 import { 
   Application,
   Router, 
-  send, 
+  send,
+  helpers, 
   path, 
   graphql,
   GraphQLSchema,
@@ -16,14 +17,21 @@ var schema = new GraphQLSchema({
     name: 'RootQueryType',
     fields: {
       hello: {
-        type: GraphQLString,
-        resolve() {
-          return 'world';
-        },
-      },
+        type: new GraphQLObjectType({
+          name: 'Hello',
+          fields: {
+            cruel: {
+              type: GraphQLString,
+              resolve() {
+              return 'world';
+              }
+            }
+          }
+        })
+      }
     },
   }),
-});;
+});
 
 var root = { hello: () => 'Hello world!' };
 
@@ -43,7 +51,8 @@ app.use(async ctx => {
 })
 router
   .get('/graphql', async (ctx) => {
-    const response: Greeter = await graphql(schema, '{ hello }', root)
+    const query = helpers.getQuery(ctx);
+    const response: Greeter = await graphql(schema, query.query, root)
     console.log(response);
     ctx.response.headers.set('Content-Type', 'application/json');
     ctx.response.body = response;
