@@ -1,36 +1,53 @@
-import * as React from 'react';
+import React, {useState, useEffect, ReactElement} from 'react';
+import { ExecutionResult } from 'graphql';
 
-class App extends React.Component<IAppProps, IAppState> {
-	constructor(props: IAppProps) {
-		super(props);
-		this.state = {
-			name: null
-		};
-	}
+const query = `
+  mutation {
+    randomId
+  }
+`;
 
-	async componentDidMount() {
-		try {
-			let r = await fetch('/api/hello');
-			let name = await r.json();
-			this.setState({ name });
-		} catch (error) {
-			console.log(error);
-		}
-	}
+const url = "/graphql";
+const opts = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query })
+};
 
-	render() {
-		return (
-			<main className="container my-5">
-				<h1 className="text-primary text-center">Hello {this.state.name}!</h1>
-			</main>
-		);
-	}
+const App = (): ReactElement => {
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
+
+  const getNewId = () => {
+    fetch (url, opts)
+    .then(r => r.json())
+    .then(data => {
+      setId(data.data.randomId)
+    })
+  }
+  const getNewGame = () => {
+    setId('')
+    setName('')
+  }
+  return (
+    <>
+      <input type="text" name="name" value={name} onChange={(e)=>{setName(e.target.value)}}></input>
+      <input type="text" name="id" value={id} onChange={(e)=>{setId(e.target.value)}}></input>
+      <button onClick={getNewId}>Get ID</button>
+      <button onClick={getNewGame}>Start Game!</button>
+
+    </>
+  );
 }
-
 export interface IAppProps {}
 
 export interface IAppState {
-	name: string;
+  name: string;
+  
 }
-
+export interface Query {
+  query?: string;
+  mutation?: string;
+  subscription?: string;
+}
 export default App;

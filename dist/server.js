@@ -106,7 +106,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexport
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.resolvers = void 0;\nvar inMemory_1 = __webpack_require__(/*! ../../../database/inMemory */ \"./database/inMemory.ts\");\nvar graphql_subscriptions_1 = __webpack_require__(/*! graphql-subscriptions */ \"graphql-subscriptions\");\nvar pubsub = new graphql_subscriptions_1.PubSub();\nvar POST_ADDED = 'POST ADDED!';\nexports.resolvers = {\n    Query: {\n        game: function (_, _a) {\n            var id = _a.id;\n            return inMemory_1.getGame(id);\n        },\n    },\n    Game: {\n        gameState: function (game) {\n            return game.gameState;\n        }\n    },\n    GameState: {\n        started: function (state) {\n            return state.started;\n        },\n        turn: function (state) {\n            return state.turn;\n        },\n        numOfPlayers: function (state) {\n            return state.numOfPlayers;\n        }\n    },\n    Mutation: {\n        newGame: function () {\n            return Math.random() * 100;\n        }\n    }\n};\n\n\n//# sourceURL=webpack:///./src/server/resolvers/map.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.resolvers = void 0;\nvar inMemory_1 = __webpack_require__(/*! ../../../database/inMemory */ \"./database/inMemory.ts\");\nvar graphql_subscriptions_1 = __webpack_require__(/*! graphql-subscriptions */ \"graphql-subscriptions\");\nvar crypto_1 = __webpack_require__(/*! crypto */ \"crypto\");\nvar pubsub = new graphql_subscriptions_1.PubSub();\nvar POST_ADDED = 'POST ADDED!';\nexports.resolvers = {\n    Subscription: {\n        commentAdded: {\n            subscribe: graphql_subscriptions_1.withFilter(function () { return pubsub.asyncIterator('commentAdded'); }, function (payload, variables) {\n                return payload.commentAdded.repository_name === variables.repoFullName;\n            }),\n        }\n    },\n    Query: {\n        game: function (_, _a) {\n            var id = _a.id;\n            return inMemory_1.getGame(id);\n        }\n    },\n    Game: {\n        gameState: function (game) {\n            return game.gameState;\n        }\n    },\n    GameState: {\n        started: function (state) {\n            return state.started;\n        },\n        turn: function (state) {\n            return state.turn;\n        },\n        numOfPlayers: function (state) {\n            return state.numOfPlayers;\n        }\n    },\n    Mutation: {\n        newGame: function () {\n            return Math.random() * 100;\n        },\n        randomId: function () {\n            return crypto_1.randomBytes(4).toString('hex');\n        }\n    }\n};\n\n\n//# sourceURL=webpack:///./src/server/resolvers/map.ts?");
 
 /***/ }),
 
@@ -130,7 +130,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar ex
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nvar __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {\n    if (Object.defineProperty) { Object.defineProperty(cooked, \"raw\", { value: raw }); } else { cooked.raw = raw; }\n    return cooked;\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar express = __webpack_require__(/*! express */ \"express\");\nvar _a = __webpack_require__(/*! apollo-server-express */ \"apollo-server-express\"), ApolloServer = _a.ApolloServer, gql = _a.gql;\nvar resolvers = __webpack_require__(/*! ./resolvers/map */ \"./src/server/resolvers/map.ts\").resolvers;\nvar routes_1 = __webpack_require__(/*! ./routes */ \"./src/server/routes.ts\");\nvar app = express();\nvar typeDefs = gql(templateObject_1 || (templateObject_1 = __makeTemplateObject([\"\\n\\ntype GameState {\\n  started: Boolean\\n  turn: Int\\n  numOfPlayers: Int\\n}\\ntype Game {\\n  gameState: GameState\\n}\\ntype Query {\\n  game(id: Int): Game\\n}\\ntype Mutation {\\n  newGame: Float\\n}\\n\"], [\"\\n\\ntype GameState {\\n  started: Boolean\\n  turn: Int\\n  numOfPlayers: Int\\n}\\ntype Game {\\n  gameState: GameState\\n}\\ntype Query {\\n  game(id: Int): Game\\n}\\ntype Mutation {\\n  newGame: Float\\n}\\n\"])));\napp.use(express.static('public'));\napp.use(routes_1.default);\nvar server = new ApolloServer({ typeDefs: typeDefs, resolvers: resolvers });\nserver.applyMiddleware({ app: app });\nvar port = process.env.PORT || 3000;\napp.listen(port, function () { return console.log(\"Server listening on port: \" + port); });\nvar templateObject_1;\n\n\n//# sourceURL=webpack:///./src/server/server.ts?");
+eval("\nvar __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {\n    if (Object.defineProperty) { Object.defineProperty(cooked, \"raw\", { value: raw }); } else { cooked.raw = raw; }\n    return cooked;\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar express = __webpack_require__(/*! express */ \"express\");\nvar http_1 = __webpack_require__(/*! http */ \"http\");\nvar apollo_server_express_1 = __webpack_require__(/*! apollo-server-express */ \"apollo-server-express\");\nvar resolvers = __webpack_require__(/*! ./resolvers/map */ \"./src/server/resolvers/map.ts\").resolvers;\nvar routes_1 = __webpack_require__(/*! ./routes */ \"./src/server/routes.ts\");\nvar app = express();\nvar typeDefs = apollo_server_express_1.gql(templateObject_1 || (templateObject_1 = __makeTemplateObject([\"\\n\\ntype GameState {\\n  started: Boolean\\n  turn: Int\\n  numOfPlayers: Int\\n}\\ntype Game {\\n  gameState: GameState\\n}\\ntype Comment {\\n  id: String\\n  text: String\\n}\\ntype Query {\\n  game(id: Int): Game\\n}\\ntype Mutation {\\n  newGame: Float\\n  randomId: String\\n}\\ntype Subscription {\\n  commentAdded(repoFullName: String!): Comment\\n}\\n\"], [\"\\n\\ntype GameState {\\n  started: Boolean\\n  turn: Int\\n  numOfPlayers: Int\\n}\\ntype Game {\\n  gameState: GameState\\n}\\ntype Comment {\\n  id: String\\n  text: String\\n}\\ntype Query {\\n  game(id: Int): Game\\n}\\ntype Mutation {\\n  newGame: Float\\n  randomId: String\\n}\\ntype Subscription {\\n  commentAdded(repoFullName: String!): Comment\\n}\\n\"])));\napp.use(express.static('public'));\napp.use(routes_1.default);\nvar server = new apollo_server_express_1.ApolloServer({ typeDefs: typeDefs, resolvers: resolvers });\nserver.applyMiddleware({ app: app });\nvar httpServer = http_1.createServer(app);\nserver.installSubscriptionHandlers(httpServer);\n// const pubsub = new PubSub();\nhttpServer.listen(3000, function () {\n    console.log(\"Listening!\");\n});\n;\nvar templateObject_1;\n\n\n//# sourceURL=webpack:///./src/server/server.ts?");
 
 /***/ }),
 
@@ -142,6 +142,17 @@ eval("\nvar __makeTemplateObject = (this && this.__makeTemplateObject) || functi
 /***/ (function(module, exports) {
 
 eval("module.exports = require(\"apollo-server-express\");\n\n//# sourceURL=webpack:///external_%22apollo-server-express%22?");
+
+/***/ }),
+
+/***/ "crypto":
+/*!*************************!*\
+  !*** external "crypto" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = require(\"crypto\");\n\n//# sourceURL=webpack:///external_%22crypto%22?");
 
 /***/ }),
 
@@ -164,6 +175,17 @@ eval("module.exports = require(\"express\");\n\n//# sourceURL=webpack:///externa
 /***/ (function(module, exports) {
 
 eval("module.exports = require(\"graphql-subscriptions\");\n\n//# sourceURL=webpack:///external_%22graphql-subscriptions%22?");
+
+/***/ }),
+
+/***/ "http":
+/*!***********************!*\
+  !*** external "http" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = require(\"http\");\n\n//# sourceURL=webpack:///external_%22http%22?");
 
 /***/ })
 

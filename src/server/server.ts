@@ -1,5 +1,9 @@
 import * as express from 'express';
-const { ApolloServer, gql } = require('apollo-server-express');
+import { createServer } from 'http';
+import { ApolloServer, gql } from 'apollo-server-express';
+import { execute, subscribe } from 'graphql';
+import { PubSub } from 'graphql-subscriptions';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 const {resolvers} = require ('./resolvers/map')
 import apiRouter from './routes';
 
@@ -15,19 +19,31 @@ type GameState {
 type Game {
   gameState: GameState
 }
+type Comment {
+  id: String
+  text: String
+}
 type Query {
   game(id: Int): Game
 }
 type Mutation {
   newGame: Float
+  randomId: String
+}
+type Subscription {
+  commentAdded(repoFullName: String!): Comment
 }
 `;
 app.use(express.static('public'));
 app.use(apiRouter);
 
 const server = new ApolloServer({ typeDefs, resolvers });
-
 server.applyMiddleware({ app });
+const httpServer = createServer(app);
+server.installSubscriptionHandlers(httpServer)
+// const pubsub = new PubSub();
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server listening on port: ${port}`));
+httpServer.listen(3000, () => {
+    console.log("Listening!")
+  })
+};
