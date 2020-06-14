@@ -3,15 +3,19 @@ import {
   startGameQuery,
   addDrawing,
   addPrompt,
-} from '../db/queries'
+} from '../../db/queries'
+import { PubSub } from 'graphql-subscriptions'
+import { getRandomPrompts } from '../randomPrompts'
 
+const pubSub = new PubSub()
 export const randomId = (): string => {
   return randomBytes(4).toString('hex')
 }
 
 export  const startGame = async (_: any, {id}: any) => {
   try {
-    await startGameQuery (id)
+    const numberOfPlayers = await startGameQuery (id)
+    await pubSub.publish('GAME_STARTED', {promptOptions: getRandomPrompts(numberOfPlayers)})
     //publish game started event
   } catch (err) {
     console.log ('startGame query error', err)

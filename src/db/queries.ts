@@ -10,35 +10,61 @@ const pool = new Pool ({
   max: 100
 })
 
-module.exports.joinGame = () => {
-
+export const joinGame = (id: string, name: string) => {
+  const orderQuery = 'select how_many_players from games where id = ?'
+  const insertQuery = 'insert into players (name, player_order, game_id) values (?,?,?)'
+  return new Promise ((resolve, reject) => {
+    pool.query(orderQuery, [id], (err, order) => {
+      if (err) {
+        reject (err);
+        return;
+      }
+      const playerOrder = order[0] + 1
+      pool.query (insertQuery, [name, playerOrder ,id], (err) => {
+        if (err) {
+          reject (err);
+          return;
+        }
+        resolve(playerOrder);
+      })
+    })
+  })
 }
 
-module.exports.startGame = () => {
+export const startGameQuery = (id: string): Promise<number> => {
+  const query = 'select how_many_players from games where id = ?'
+  return new Promise ((resolve, reject) => {
+    pool.query(query, [id], (err, result) => {
+      if (err) {
+        reject (err);
+        return;
+      }
+      resolve(result);
+    })
+  })
+}
+
+export const addPrompt = () => {
   
 }
 
-module.exports.addPrompt = () => {
+export const addDrawing = () => {
   
 }
 
-module.exports.addDrawing = () => {
+export const getNextPrompt = () => {
   
 }
 
-module.exports.getNextPrompt = () => {
+export const getNextDrawing = () => {
   
 }
 
-module.exports.getNextDrawing = () => {
+export const incrementScore = () => {
   
 }
 
-module.exports.incrementScore = () => {
-  
-}
-
-module.exports.resetGame = () => {
+export const resetGame = () => {
   
 }
 

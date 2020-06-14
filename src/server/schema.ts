@@ -14,14 +14,14 @@ type Comment {
   id: String
   text: String
 }
-type Query {
-  game(id: Int): Game
-}
 type Mutation {
-  newGame: Float
   randomId: String
+  startGame: [String]
+  drawing: String
+  caption: String
+  endGame
 }
 type Subscription {
-  commentAdded(repoFullName: String!): Comment
+  playGame(id: string): [String]
 }
 `;

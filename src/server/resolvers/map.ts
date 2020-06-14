@@ -1,43 +1,26 @@
 import {getGame} from '../../../database/inMemory'
 import {Game, GameState} from './types'
-import { PubSub, withFilter } from 'graphql-subscriptions';
-import {randomBytes} from 'crypto'
-const pubsub = new PubSub();
+import {gamePlaySubscription} from './subscription'
 
-const POST_ADDED = 'POST ADDED!'
+import { 
+  randomId,
+  startGame,
+  submitDrawing,
+  submitCaption,
+  endGame,
+} from './mutation';
 
 export const resolvers = {
   Subscription: {
-    commentAdded: {
-      subscribe: withFilter(() => pubsub.asyncIterator('commentAdded'), (payload, variables) => {
-         return payload.commentAdded.repository_name === variables.repoFullName;
-      }),
-    }
-  },
-  Query: {
-    game: (_: any, {id}: any): Game => {
-      return getGame(id)
-    }
-  },
-  Game: {
-    gameState: (game: Game): GameState => {
-      return game.gameState
-    }
-  },
-  GameState: {
-    started: (state: any): boolean => {
-      return state.started
-    },
-    turn: (state: any): number => {
-      return state.turn
-    },
-    numOfPlayers: (state: any): number => {
-      return state.numOfPlayers
+    playGame: {
+      subscribe: gamePlaySubscription,
     }
   },
   Mutation: {
-    randomId: (): string => {
-      return randomBytes(4).toString('hex')
-    }
+    randomId,
+    startGame,
+    drawing: submitDrawing,
+    caption: submitCaption,
+    endGame,
   }
 }
