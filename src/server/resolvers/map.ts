@@ -36,10 +36,7 @@ export const resolvers = {
     }
   },
   Mutation: {
-    newGame: (): number => {
-      return Math.random() * 100
-    },
-        randomId: (): string => {
+    randomId: (): string => {
       return randomBytes(4).toString('hex')
     }
   }
