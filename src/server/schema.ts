@@ -2,30 +2,24 @@ import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
 
-type GameState {
-  started: Boolean
-  turn: Int
-  numOfPlayers: Int
-}
-type Game {
-  gameState: GameState
-}
-type Comment {
-  id: String
-  text: String
+type NewPlayerInfo {
+  playerOrder: Int
+  playerUniqueId: Int
 }
 type Query {
   drawing: String
-  caption: String
+  prompt: String
+  randomId: String
+  nextPlayer(playerOrder: Int, numberOfPlayers:Int, gameId: String): Int
 }
 type Mutation {
-  randomId: String
-  startGame: [String]
-  drawing(String): Boolean
-  caption(String): Boolean
+  joinGame (gameHash: String, name: String): NewPlayerInfo
+  startGame(gameHash: String): [String]
+  drawing(drawing: String, nextPlayer: Int, playerId: String): Boolean
+  prompt(prompt: String, nextPlayer: Int, playerId: String): Boolean
   endGame: [String]
 }
 type Subscription {
-  playGame(id: string): [String]
+  playGame(id: String): [String]
 }
 `;

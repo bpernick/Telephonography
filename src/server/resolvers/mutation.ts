@@ -1,6 +1,6 @@
-import {randomBytes} from 'crypto'
 import {
   startGameQuery,
+  joinGame as joinGameQuery,
   addDrawing,
   addPrompt,
 } from '../../db/queries'
@@ -8,10 +8,15 @@ import { PubSub } from 'graphql-subscriptions'
 import { getRandomPrompts } from '../randomPrompts'
 
 const pubSub = new PubSub()
-export const randomId = (): string => {
-  return randomBytes(4).toString('hex')
-}
 
+export  const joinGame = async (_: any, {name, gameHash}: any) => {
+  try {
+    const playerInfo = await joinGameQuery(gameHash, name);
+    return playerInfo;
+  } catch (err) {
+    console.log ('joinGame query error', err)
+  }
+}
 export  const startGame = async (_: any, {gameHash}: any) => {
   try {
     const numberOfPlayers = await startGameQuery (gameHash);
@@ -24,8 +29,7 @@ export  const startGame = async (_: any, {gameHash}: any) => {
   }
 }
 
-export  const submitDrawing = async (_: any, {drawing, playerOrder, numberOfPlayers, playerId}: any) => { 
-  const nextPlayer = playerOrder % numberOfPlayers  + 1
+export  const submitDrawing = async (_: any, {drawing, nextPlayer, playerId}: any) => { 
   try {
     await addDrawing(drawing, nextPlayer, playerId)
     return true;
@@ -34,9 +38,8 @@ export  const submitDrawing = async (_: any, {drawing, playerOrder, numberOfPlay
   }
 }
 
-export  const submitCaption = async (_: any, {prompt, playerOrder, numberOfPlayers, playerId}: any) => {
+export  const submitCaption = async (_: any, {prompt, nextPlayer, playerId}: any) => {
   try {
-  const nextPlayer = playerOrder % numberOfPlayers + 1
     await addPrompt(prompt, nextPlayer, playerId)
     return true;
   } catch (err) {

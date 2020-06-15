@@ -1,14 +1,16 @@
 import {gamePlaySubscription} from './subscription'
 import { 
-  randomId,
+  joinGame,
   startGame,
   submitDrawing,
   submitCaption,
   endGame,
 } from './mutation';
 import { 
+  randomId,
   prompt,
-  drawing
+  drawing,
+  nextPlayer,
 } from './query';
 
 export const resolvers = {
@@ -19,11 +21,13 @@ export const resolvers = {
     }
   },
   Query: {
+    randomId,
     prompt,
     drawing,
+    nextPlayer,
   },
   Mutation: {
-    randomId,
+    joinGame,
     startGame,
     drawing: submitDrawing,
     prompt: submitCaption,

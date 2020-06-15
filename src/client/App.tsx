@@ -1,5 +1,4 @@
 import React, {useState, useEffect, ReactElement} from 'react';
-import { ExecutionResult } from 'graphql';
 
 const query = `
   mutation {

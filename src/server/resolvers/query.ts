@@ -1,7 +1,13 @@
 import {
   getNextDrawing,
-  getNextPrompt
+  getNextPrompt,
+  getUniqueIdFromOrder,
 } from '../../db/queries'
+import { randomBytes } from 'crypto'
+
+export const randomId = (): string => {
+  return randomBytes(4).toString('hex')
+}
 
 export const prompt = async (playerOrder: number): Promise<string|null> => {
   try {
@@ -20,5 +26,15 @@ export const drawing = async (playerOrder: number): Promise<string|null> => {
     return drawing;
   } catch (err) {
     console.log('drawing query error', err)
+  }
+}
+
+export const nextPlayer = async (playerOrder: number, numberOfPlayers: number, gameId: string): Promise<number> => {
+  try {
+    const next = playerOrder % numberOfPlayers  + 1;
+    const playerId = await getUniqueIdFromOrder(next, gameId);
+    return playerId;
+  } catch (err) {
+    console.log('next player query error', err)
   }
 }
