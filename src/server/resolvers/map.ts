@@ -1,7 +1,4 @@
-import {getGame} from '../../../database/inMemory'
-import {Game, GameState} from './types'
 import {gamePlaySubscription} from './subscription'
-
 import { 
   randomId,
   startGame,
@@ -9,18 +6,27 @@ import {
   submitCaption,
   endGame,
 } from './mutation';
+import { 
+  prompt,
+  drawing
+} from './query';
 
 export const resolvers = {
   Subscription: {
+    //how do I pass down the variables?
     playGame: {
       subscribe: gamePlaySubscription,
     }
+  },
+  Query: {
+    prompt,
+    drawing,
   },
   Mutation: {
     randomId,
     startGame,
     drawing: submitDrawing,
-    caption: submitCaption,
+    prompt: submitCaption,
     endGame,
   }
 }

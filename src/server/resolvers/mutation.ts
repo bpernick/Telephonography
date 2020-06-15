@@ -12,34 +12,39 @@ export const randomId = (): string => {
   return randomBytes(4).toString('hex')
 }
 
-export  const startGame = async (_: any, {id}: any) => {
+export  const startGame = async (_: any, {gameHash}: any) => {
   try {
-    const numberOfPlayers = await startGameQuery (id)
-    await pubSub.publish('GAME_STARTED', {promptOptions: getRandomPrompts(numberOfPlayers)})
-    //publish game started event
+    const numberOfPlayers = await startGameQuery (gameHash);
+    await pubSub.publish(`${gameHash}_GAME_STARTED`, {
+      promptOptions: getRandomPrompts(numberOfPlayers)
+    })
+    return true;
   } catch (err) {
     console.log ('startGame query error', err)
   }
 }
 
-export  const submitDrawing = async (_: any, {drawing}: any) => {
+export  const submitDrawing = async (_: any, {drawing, playerOrder, numberOfPlayers, playerId}: any) => { 
+  const nextPlayer = playerOrder % numberOfPlayers  + 1
   try {
-    await addDrawing(drawing)
-    //publish game started event
+    await addDrawing(drawing, nextPlayer, playerId)
+    return true;
   } catch (err) {
     console.log ('addDrawing query error', err)
   }
 }
 
-export  const submitCaption = async (_: any, {prompt}: any) => {
+export  const submitCaption = async (_: any, {prompt, playerOrder, numberOfPlayers, playerId}: any) => {
   try {
-    await addPrompt(prompt)
-    //publish game started event
+  const nextPlayer = playerOrder % numberOfPlayers + 1
+    await addPrompt(prompt, nextPlayer, playerId)
+    return true;
   } catch (err) {
     console.log ('addPrompt query error', err)
   }
 }
 
 export  const endGame = async (_: any, {id}: any) => {
+  
 
 }

@@ -14,12 +14,16 @@ type Comment {
   id: String
   text: String
 }
+type Query {
+  drawing: String
+  caption: String
+}
 type Mutation {
   randomId: String
   startGame: [String]
-  drawing: String
-  caption: String
-  endGame
+  drawing(String): Boolean
+  caption(String): Boolean
+  endGame: [String]
 }
 type Subscription {
   playGame(id: string): [String]
