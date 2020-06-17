@@ -16,7 +16,6 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.applyMiddleware({ app });
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer)
-// const pubsub = new PubSub();
 
 httpServer.listen(3000, () => {
   console.log("Listening!")

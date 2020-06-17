@@ -1,6 +1,10 @@
-import { PubSub } from 'graphql-subscriptions';
+// import { PubSub } from 'graphql-subscriptions';
 
-const pubsub = new PubSub();
+// const pubsub = new PubSub();
+import { pubSub} from './pubSub';
 
-export const gamePlaySubscription = (_:any, {gameHash}: any) => pubsub.asyncIterator([`${gameHash}_GAME_STARTED`, `${gameHash}_GAME_FINISHED`]) 
+import { withFilter } from 'graphql-subscriptions'
 
+export const gamePlaySubscription = withFilter(() => pubSub.asyncIterator('GAME_STARTED'), (payload, variables) => {
+  return payload.id === variables.id;
+})

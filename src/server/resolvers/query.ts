@@ -29,9 +29,10 @@ export const drawing = async (playerOrder: number): Promise<string|null> => {
   }
 }
 
-export const nextPlayer = async (playerOrder: number, numberOfPlayers: number, gameId: string): Promise<number> => {
+export const nextPlayer = async (_:any, {playerOrder, numberOfPlayers, gameId}: any): Promise<number> => {
   try {
     const next = playerOrder % numberOfPlayers  + 1;
+    console.log(next)
     const playerId = await getUniqueIdFromOrder(next, gameId);
     return playerId;
   } catch (err) {

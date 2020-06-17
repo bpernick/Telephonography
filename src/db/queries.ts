@@ -45,15 +45,15 @@ export const joinGame = (gameHash: string, name: string) => {
   })
 }
 
-export const startGameQuery = (id: string): Promise<number> => {
-  const query = 'select how_many_players from games where id = ?'
+export const startGameQuery = (hash: string): Promise<number> => {
+  const query = 'select how_many_players from games where hash = $1'
   return new Promise ((resolve, reject) => {
-    pool.query(query, [id], (err: Error, result: any) => {
+    pool.query(query, [hash], (err: Error, result: any) => {
       if (err) {
         reject (err);
         return;
       }
-      resolve(result);
+      resolve(result.rows[0]['how_many_players']);
     })
   })
 }
@@ -66,14 +66,15 @@ export const getUniqueIdFromOrder = (playerOrder: number, gameId: string): Promi
         reject(err);
         return;
       }
-      resolve(result[0]);
+      console.log('rows', result.rows)
+      resolve(result.rows[0].id);
     })
   })
 }
 
 export const addPrompt = (prompt: string, nextPlayerId: number, playerId: number): Promise<void> => {
-  const updateNextPlayer = 'update players set next_prompt = ? where id = ?'
-  const updatePrompts = 'update drawings_and_prompts set prompts  = array_append(prompts , ?) where player_id = ?'
+  const updateNextPlayer = 'update players set next_prompt = $1 where id = $2'
+  const updatePrompts = 'update drawings_and_prompts set prompts = array_append(prompts , $1) where player_id = $2'
   return new Promise ((resolve, reject) => {
     pool.query(updateNextPlayer, [prompt, nextPlayerId], (err: Error) =>{
       if (err) {
@@ -164,7 +165,6 @@ export const getNextDrawing = (playerId: number): Promise<string|null> => {
       })
     })
   })
-  
 }
 
 export const incrementScore = (playerId: number): Promise<void> => {

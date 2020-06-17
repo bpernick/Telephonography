@@ -6,6 +6,7 @@ type NewPlayerInfo {
   playerOrder: Int
   playerUniqueId: Int
 }
+
 type Query {
   drawing: String
   prompt: String
@@ -14,9 +15,9 @@ type Query {
 }
 type Mutation {
   joinGame (gameHash: String, name: String): NewPlayerInfo
-  startGame(gameHash: String): [String]
-  drawing(drawing: String, nextPlayer: Int, playerId: String): Boolean
-  prompt(prompt: String, nextPlayer: Int, playerId: String): Boolean
+  startGame(gameHash: String): Boolean
+  drawing(drawing: String, nextPlayer: Int, playerId: Int): Boolean
+  prompt(prompt: String, nextPlayer: Int, playerId: Int): Boolean
   endGame: [String]
 }
 type Subscription {

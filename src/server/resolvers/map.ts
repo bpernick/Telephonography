@@ -15,7 +15,6 @@ import {
 
 export const resolvers = {
   Subscription: {
-    //how do I pass down the variables?
     playGame: {
       subscribe: gamePlaySubscription,
     }
