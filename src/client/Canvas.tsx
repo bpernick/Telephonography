@@ -4,12 +4,14 @@ export const Canvas = (props: any) => {
   const canvasRef = useRef(null);
   let ctx: OffscreenCanvasRenderingContext2D; 
 
-  useEffect (() => {
-    ctx = canvasRef.current.getContext("2d");
-  })
 
   let posx: number;
   let posy: number;
+  let previousStates = [];
+
+  useEffect (() => {
+    ctx = canvasRef.current.getContext("2d");
+  })
 
   const setPosition = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
     posx = event.clientX;
@@ -17,8 +19,21 @@ export const Canvas = (props: any) => {
   }
 
   const mouseUp = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
-    console.log(ctx.getImageData(0,0,500,500));
-    ctx.closePath()
+    const currentState: ImageData = ctx.getImageData(0,0,500,500);
+    previousStates.push(currentState);
+  }
+
+  const onDelete = (): void => {
+    const currentState = previousStates.pop()
+    if (currentState) {
+      ctx.putImageData(currentState,0,0)
+    } else {
+      ctx.clearRect(0, 0, 500, 500);
+    }
+  }
+  const onClear = (): void => {
+    ctx.clearRect(0, 0, 500, 500);
+    previousStates = [];
   }
 
   const mouseMove = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
@@ -34,5 +49,10 @@ export const Canvas = (props: any) => {
     ctx.stroke();
   }
 
-  return (<canvas ref = {canvasRef} onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>)
+  return (<>
+    <canvas ref = {canvasRef} onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
+    <button onClick={onDelete}>{"Undo"}</button>
+    <button onClick={onClear}>{"Clear"}</button>
+    <button>{"Submit"}</button>
+  </>)
 }
