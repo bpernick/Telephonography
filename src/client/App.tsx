@@ -1,4 +1,5 @@
 import React, {useState, useEffect, ReactElement} from 'react';
+import { Canvas } from './canvas'
 
 const query = `
   mutation {
@@ -34,6 +35,7 @@ const App = (): ReactElement => {
       <input type="text" name="id" value={id} onChange={(e)=>{setId(e.target.value)}}></input>
       <button onClick={getNewId}>Get ID</button>
       <button onClick={getNewGame}>Start Game!</button>
+      <Canvas></Canvas>
 
     </>
   );
