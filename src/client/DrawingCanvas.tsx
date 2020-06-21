@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react'
+import React, {useRef, useEffect} from 'react'
 
 export const Canvas = (props: any) => {
   const canvasRef = useRef(null);
@@ -7,7 +7,7 @@ export const Canvas = (props: any) => {
 
   let posx: number;
   let posy: number;
-  let previousStates = [];
+  let previousStates: ImageData [] = [];
 
   useEffect (() => {
     ctx = canvasRef.current.getContext("2d");
@@ -15,6 +15,7 @@ export const Canvas = (props: any) => {
 
   const setPosition = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
     posx = event.clientX;
+    //accounts for mouse offset
     posy = event.clientY - 20;
   }
 

@@ -4,13 +4,11 @@ import {
   addDrawing,
   addPrompt,
 } from '../../db/queries'
-// import { PubSub } from 'graphql-subscriptions'
 import { pubSub } from './pubSub'
 import { getRandomPrompts } from '../randomPrompts'
 
-// const pubSub = new PubSub()
-
 export  const joinGame = async (_: any, {name, gameHash}: any) => {
+  console.log ('joingame', name, gameHash )
   try {
     const playerInfo = await joinGameQuery(gameHash, name);
     return playerInfo;
@@ -21,7 +19,7 @@ export  const joinGame = async (_: any, {name, gameHash}: any) => {
 export  const startGame = async (_: any, {gameHash}: any) => {
   try {
     const numberOfPlayers = await startGameQuery (gameHash);
-    await pubSub.publish(`GAME_STARTED`, { playGame: getRandomPrompts(numberOfPlayers), id: gameHash })
+    await pubSub.publish(`GAME_STARTED`, { playGame: getRandomPrompts(numberOfPlayers), id: gameHash, gameStatus: 'STARTED' })
     return true;
   } catch (err) {
     console.log ('startGame query error', err)

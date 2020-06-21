@@ -1,54 +1,64 @@
 import React, {useState, useEffect, ReactElement} from 'react';
-import { Canvas } from './canvas'
-
-const query = `
-  mutation {
-    randomId
-  }
-`;
-
-const url = "/graphql";
-const opts = {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query })
-};
+import { Login } from './Login'
+import { getOpts } from './graphqlHeaders'
+import { GamePage } from './GamePage'
 
 const App = (): ReactElement => {
   const [name, setName] = useState('');
-  const [id, setId] = useState('');
+  const [gameHash, setGameHash] = useState('');
+  const [playerOrder, setOrder] = useState(-1);
+  const [playerId, setId] = useState(-1);
+  const [nextPlayer, setNextPlayer] = useState(-1);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   const getNewId = () => {
-    fetch (url, opts)
+    const query = `
+      query {
+        randomId
+      }
+    `;
+    fetch ('/graphql', getOpts(query))
     .then(r => r.json())
     .then(data => {
-      setId(data.data.randomId)
+      setGameHash(data.data.randomId)
     })
   }
-  const getNewGame = () => {
-    setId('')
-    setName('')
-  }
-  return (
-    <>
-      <input type="text" name="name" value={name} onChange={(e)=>{setName(e.target.value)}}></input>
-      <input type="text" name="id" value={id} onChange={(e)=>{setId(e.target.value)}}></input>
-      <button onClick={getNewId}>Get ID</button>
-      <button onClick={getNewGame}>Start Game!</button>
-      <Canvas></Canvas>
 
-    </>
+  const joinGame = () => {
+    const query = `
+    mutation {
+      joinGame ( name: "${name}", gameHash: "${gameHash}") {
+        playerOrder
+        playerUniqueId
+      }
+    }
+    `;
+    fetch ('/graphql', getOpts(query))
+    .then(r => r.json())
+    .then(data => {
+      setId(data.data.joinGame.id)
+      setOrder(data.data.joinGame.playerOrder)
+      setLoggedIn(true);
+    })
+  }
+
+  const submitDrawing = (base64data: string) => {
+    const query = `
+    mutation {
+      drawing (drawing:${base64data}, playerId: ${playerId}, nextPlayer: ${nextPlayer})
+    }
+  `;
+  fetch ('/graphql', getOpts(query))
+  .then(r => r.json())
+  }
+
+  return (
+    <> {
+      isLoggedIn ?
+      <GamePage gameHash = { gameHash }/>:
+      <Login joinGame = { joinGame } getNewId = { getNewId } setName = { setName } setGameHash = { setGameHash } name = { name } gameHash = { gameHash }/>
+    }</>
   );
 }
-export interface IAppProps {}
 
-export interface IAppState {
-  name: string;
-  
-}
-export interface Query {
-  query?: string;
-  mutation?: string;
-  subscription?: string;
-}
 export default App;

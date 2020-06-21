@@ -1,11 +1,8 @@
 import * as express from 'express';
 import { createServer } from 'http';
 import { ApolloServer} from 'apollo-server-express';
-// import { execute, subscribe } from 'graphql';
-// import { PubSub } from 'graphql-subscriptions';
-// import { SubscriptionServer } from 'subscriptions-transport-ws';
-import {resolvers} from './resolvers/map'
-import {typeDefs} from './schema'
+import { resolvers } from './resolvers/map'
+import { typeDefs } from './schema'
 
 const app = express();
 

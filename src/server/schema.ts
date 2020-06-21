@@ -13,6 +13,7 @@ type Query {
   randomId: String
   nextPlayer(playerOrder: Int, numberOfPlayers:Int, gameId: String): Int
 }
+
 type Mutation {
   joinGame (gameHash: String, name: String): NewPlayerInfo
   startGame(gameHash: String): Boolean
@@ -20,6 +21,7 @@ type Mutation {
   prompt(prompt: String, nextPlayer: Int, playerId: Int): Boolean
   endGame: [String]
 }
+
 type Subscription {
   playGame(id: String): [String]
 }
