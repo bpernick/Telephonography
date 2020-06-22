@@ -1,6 +1,6 @@
 import React, {useRef, useEffect} from 'react'
 
-export const Canvas = (props: any) => {
+export const DrawingCanvas = (props: any) => {
   const canvasRef = useRef(null);
   let ctx: OffscreenCanvasRenderingContext2D; 
 

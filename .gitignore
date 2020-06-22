@@ -2,3 +2,6 @@ node_modules/
 dist/
 public/js/app.js
 .env
+studioFiles
+yarn.lock
+plasmic.json

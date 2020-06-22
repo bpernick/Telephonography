@@ -7,6 +7,7 @@ CREATE DATABASE telephonography;
 CREATE TABLE games (
   hash VARCHAR(255) NOT NULL PRIMARY KEY,
   how_many_players SMALLINT DEFAULT 0 NOT NULL,
+  players_left SMALLINT DEFAULT 0 NOT NULL,
   is_started BOOLEAN
 );
   
@@ -15,7 +16,7 @@ CREATE TABLE players (
   name VARCHAR (255) NOT NULL,
   player_order SMALLINT DEFAULT 0 NOT NULL,
   score SMALLINT DEFAULT 0 NOT NULL,
-  turn_number SMALLINT DEFAULT 0 NOT NULL,
+  turn_number SMALLINT DEFAULT 1 NOT NULL,
   game_id VARCHAR (255) NOT NULL,
   next_drawing bytea,
   next_prompt VARCHAR(255),
