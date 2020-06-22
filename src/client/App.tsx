@@ -47,20 +47,10 @@ const App = (): ReactElement => {
     })
   }
 
-  const submitDrawing = (base64data: string) => {
-    const query = `
-    mutation {
-      drawing (drawing:${base64data}, playerId: ${playerId}, nextPlayer: ${nextPlayer})
-    }
-  `;
-  fetch ('/graphql', getOpts(query))
-    .then(r => r.json())
-  }
-
   return (
     <> {
       isLoggedIn ?
-      <GameRoom gameHash = { gameHash } playerOrder = { playerOrder } />:
+      <GameRoom gameHash = { gameHash } playerId = { playerId } playerOrder = { playerOrder } nextPlayer = { nextPlayer }  />:
       <Login joinGameButtonClick = { joinGame } getIdButtonClick = { getNewId } onChangeName = { setName } onChangeGameHash = { setGameHash } name = { name } gameHash = { gameHash } />
     }</>
   );

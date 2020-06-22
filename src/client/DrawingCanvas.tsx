@@ -1,10 +1,11 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useEffect, ReactElement} from 'react'
 
-export const DrawingCanvas = (props: any) => {
+export const DrawingCanvas = ({
+  prompt,
+  submitDrawing,
+}:DrawingCanvasProps ):ReactElement => {
   const canvasRef = useRef(null);
   let ctx: OffscreenCanvasRenderingContext2D; 
-
-
   let posx: number;
   let posy: number;
   let previousStates: ImageData [] = [];
@@ -52,8 +53,13 @@ export const DrawingCanvas = (props: any) => {
 
   return (<>
     <canvas ref = {canvasRef} onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
-    <button onClick={onDelete}>{"Undo"}</button>
-    <button onClick={onClear}>{"Clear"}</button>
+    <button onClick= { onDelete }>{"Undo"}</button>
+    <button onClick= { onClear }>{"Clear"}</button>
     <button>{"Submit"}</button>
   </>)
+}
+
+export interface DrawingCanvasProps {
+  prompt: string,
+  submitDrawing: Function,
 }

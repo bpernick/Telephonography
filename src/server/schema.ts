@@ -33,9 +33,9 @@ type Query {
 
 type Mutation {
   joinGame (gameHash: String, name: String): NewPlayerInfo
-  startGame(gameHash: String): Boolean
-  drawing(drawing: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
-  prompt(prompt: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
+  startGame (gameHash: String): Boolean
+  drawing (drawing: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
+  prompt (prompt: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
   endGame: [String]
 }
 

@@ -14,6 +14,7 @@ export const HostWaitingPage = ({
   }
   return (<>
     <p>Telephonography</p>
+    <p>{`Your code is ${gameHash}`}</p>
     <p>Wait for all your guests to sign in</p>
     <p>And then...</p>
     <button onClick ={ startGame }> Start Game! </button>

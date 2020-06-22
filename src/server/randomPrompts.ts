@@ -1,7 +1,7 @@
-export const getRandomPrompts = (numberOfPrompts: number): string[] => {
+export const getRandomPrompts = (numberOfPlayers: number): string[] => {
   //graphql appears not to support nested arrays
   let randomPrompts: string[] = []
-  for (let i = 0; i < numberOfPrompts; i++){
+  for (let i = 0; i < numberOfPlayers; i++){
     const randomIndex = Math.floor(Math.random() * 44);
     randomPrompts = randomPrompts.concat(prompts.whiteCards.slice(randomIndex, randomIndex + 6))
   }

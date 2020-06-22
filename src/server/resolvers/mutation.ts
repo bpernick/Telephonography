@@ -41,7 +41,7 @@ export  const startGame = async (_: any, {gameHash}: any) => {
 export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, gameHash }: any) => { 
   try {
     const turn = await incrementTurn(playerId, gameHash);
-    if (turn === 0) {
+    if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
       playersLeft === 0 && await pubSub.publish(`GAME_STARTED`, { 
         playGame: {
@@ -67,7 +67,7 @@ export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, ga
 export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gameHash }: any) => {
   try {
     const turn = await incrementTurn(playerId, gameHash);
-    if (turn === 0) {
+    if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
       playersLeft === 0 && await pubSub.publish(`GAME_STARTED`, { 
         playGame: {
@@ -80,7 +80,9 @@ export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gam
     } else {
       await addPrompt(prompt, nextPlayer, playerId);
       const drawing = await getNextDrawing (playerId);
+      const newPrompt = await getNextPrompt (playerId);
       return ({
+        prompt: newPrompt,
         drawing,
         turn,
       });

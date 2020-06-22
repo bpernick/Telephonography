@@ -118,8 +118,8 @@ export const addDrawing = (drawing: string, nextPlayerId: number, playerId: numb
 }
 
 export const getNextPrompt = (playerId: number): Promise<string|null> => {
-  const query = 'select next_prompt from players where id = ?'
-  const update = 'update players set next_prompt = null where id = ?'
+  const query = 'select next_prompt from players where id = $1'
+  const update = 'update players set next_prompt = null where id = $1'
   return new Promise ((resolve, reject) => {
     pool.query(query, [playerId], (err: Error, promptArr: any) => {
       if (err) {
@@ -143,8 +143,8 @@ export const getNextPrompt = (playerId: number): Promise<string|null> => {
 }
 
 export const getNextDrawing = (playerId: number): Promise<string|null> => {
-  const query = 'select next_drawing from players where id = ?'
-  const update = 'update players set next_drawing = null where id = ?'
+  const query = 'select next_drawing from players where id = $1'
+  const update = 'update players set next_drawing = null where id = $1'
   return new Promise ((resolve, reject) => {
     pool.query(query, [playerId], (err: Error, drawingArr: any) => {
       if (err) {
@@ -197,8 +197,8 @@ export const incrementTurn = (playerId: number, gameHash: string): Promise<numbe
           reject(err);
           return;
         }
-        //if last turn has been completed, set turn to 0. Otherwise, increment it
-        const turn: number = result.rows[0].turn_number >= players ? 0 : result.rows[0].turn_number + 1;
+        //if last turn has been completed, set turn to -1. Otherwise, increment it
+        const turn: number = result.rows[0].turn_number >= players ? -1 : result.rows[0].turn_number + 1;
         console.log(turn)
         pool.query(updateTurn, [turn, playerId], (err: Error, result: any) => {
           if (err) {
