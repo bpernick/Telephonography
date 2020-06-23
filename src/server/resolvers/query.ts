@@ -2,6 +2,7 @@ import {
   getNextDrawing,
   getNextPrompt,
   getUniqueIdFromOrder,
+  getNumberOfPlayers,
 } from '../../db/queries'
 import { randomBytes } from 'crypto'
 
@@ -29,8 +30,9 @@ export const drawing = async (playerOrder: number): Promise<string|null> => {
   }
 }
 
-export const nextPlayer = async (_:any, {playerOrder, numberOfPlayers, gameId}: any): Promise<number> => {
+export const nextPlayer = async (_:any, {playerOrder, gameId}: any): Promise<number> => {
   try {
+    const numberOfPlayers = await getNumberOfPlayers(gameId)
     const next = playerOrder % numberOfPlayers  + 1;
     console.log(next)
     const playerId = await getUniqueIdFromOrder(next, gameId);

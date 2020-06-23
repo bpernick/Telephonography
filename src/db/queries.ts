@@ -72,6 +72,19 @@ export const getUniqueIdFromOrder = (playerOrder: number, gameId: string): Promi
   })
 }
 
+export const getNumberOfPlayers = (gameHash: string): Promise<number> => {
+  const query = 'select how_many_players from games where hash = $1';
+  return new Promise ((resolve, reject) => {
+    pool.query(query, [gameHash], (err: Error, result: any) =>{
+      if (err) {
+        console.log('error sending drawing to next player')
+        reject(err);
+        return;
+      }
+      resolve(result.rows[0].how_many_players);
+    })
+  })
+}
 export const addPrompt = (prompt: string, nextPlayerId: number, playerId: number): Promise<void> => {
   const updateNextPlayer = 'update players set next_prompt = $1 where id = $2'
   const updatePrompts = 'update drawings_and_prompts set prompts = array_append(prompts , $1) where player_id = $2'

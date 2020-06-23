@@ -38,10 +38,7 @@ export const GamePage = ({
   const submitPrompt = (promptData: string) => {
     const promptMutation = `
       mutation {
-        prompt (prompt: "${promptData}", playerId: ${playerId}, nextPlayer: ${nextPlayer}, gameHash: "${gameHash}") {
-          drawing
-          turn
-        }
+        prompt (prompt: "${promptData}", playerId: ${playerId}, nextPlayer: ${nextPlayer}, gameHash: "${gameHash}")
       }
     `;
     fetch ('/graphql', getOpts(promptMutation))

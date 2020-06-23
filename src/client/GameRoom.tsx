@@ -1,7 +1,5 @@
 import React, { useState, useEffect, ReactElement } from 'react'
 import { getOpts } from './graphqlHeaders'
-import gql from "graphql-tag";
-import { useSubscription } from "@apollo/react-hooks";
 import { GamePage } from './GamePage'
 import { WaitingRoom } from './WaitingRoom'
 import { GameEnd } from './GameEnd'
@@ -23,9 +21,16 @@ export const GameRoom = ({
   gameHash,
   playerId,
   playerOrder,
-  nextPlayer,
 }: GameRoomProps ): ReactElement => {
-  
+
+  const [nextPlayer, setNextPlayer] = useState(-1);
+  const [gameStatus, setGameStatus] = useState('PENDING');
+  const [prompts, setPrompts] = useState([]);
+  const [finalAnswers, setFinalAnswers] = useState({
+    drawings:[],
+    prompts:[],
+  });
+
   const playGameQuery = `
     subscription {
       playGame (id: "${gameHash}") {
@@ -39,6 +44,11 @@ export const GameRoom = ({
       }
     }
   `
+  const nextPlayerQuery = `
+    query {
+      nextPlayer (playerOrder: ${playerOrder}, gameId: "${gameHash}")
+    }`
+  
   const pickPrompts = (prompts: string[]): string[] => {
     const index = (playerOrder - 1) * 6;
     return prompts.slice(index, index + 6)
@@ -63,14 +73,25 @@ export const GameRoom = ({
           }));
           break;
         }
+
         case 'connection_error': {
           console.error(data.payload)
           break;
         }
+
         case 'ka': {
           break;
         }
+
         case 'data': {
+
+          fetch('/graphql', getOpts(nextPlayerQuery))
+            .then(data => data.json())
+            .then (({ data }) => {
+              console.log('next', data.nextPlayer)
+              setNextPlayer(data.nextPlayer)
+            })
+          
           console.log('data', data);
           const playGame = data.payload.data.playGame;
           playGame.prompts && setPrompts(pickPrompts(playGame.prompts));
@@ -78,6 +99,7 @@ export const GameRoom = ({
           setGameStatus(playGame.gameStatus)
           break;
         }
+
         case 'complete': {
           console.log('completed', data)
           break;
@@ -85,14 +107,6 @@ export const GameRoom = ({
       }
     })
   }, [])
-  
-
-  const [gameStatus, setGameStatus] = useState('PENDING');
-  const [prompts, setPrompts] = useState([]);
-  const [finalAnswers, setFinalAnswers] = useState({
-    drawings: [],
-    prompts:[],
-  })
 
   return (
   <div>
@@ -106,5 +120,4 @@ export interface GameRoomProps {
   gameHash: string,
   playerId: number,
   playerOrder: number,
-  nextPlayer: number,
 }

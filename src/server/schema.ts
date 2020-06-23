@@ -28,7 +28,7 @@ type Query {
   drawing: String
   prompt: String
   randomId: String
-  nextPlayer(playerOrder: Int, numberOfPlayers:Int, gameId: String): Int
+  nextPlayer(playerOrder: Int, gameId: String): Int
 }
 
 type Mutation {
