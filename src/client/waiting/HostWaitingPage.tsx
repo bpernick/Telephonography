@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { getOpts } from './graphqlHeaders'
+import { getOpts } from '../utils/graphqlHeaders'
 
 export const HostWaitingPage = ({
   gameHash

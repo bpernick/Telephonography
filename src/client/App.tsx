@@ -1,6 +1,6 @@
 import React, {useState, useEffect, ReactElement} from 'react';
 import { Login } from './Login'
-import { getOpts } from './graphqlHeaders'
+import { getOpts } from './utils/graphqlHeaders'
 import { GameRoom } from './GameRoom'
 
 const App = (): ReactElement => {

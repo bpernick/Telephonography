@@ -9,7 +9,7 @@ type NewPlayerInfo {
 
 type NextTurn {
   drawing: String
-  prompt: String 
+  prompt: String
   turn: Int
 }
 
@@ -17,11 +17,16 @@ type FinalAnswers {
   drawings: [String]
   prompts: [String]
 }
+
 type PlayGame {
   finalAnswers: FinalAnswers
   prompts: [String]
   id: String
   gameStatus: String
+}
+
+type Turn {
+  turn: Int
 }
 
 type Query {
@@ -34,12 +39,13 @@ type Query {
 type Mutation {
   joinGame (gameHash: String, name: String): NewPlayerInfo
   startGame (gameHash: String): Boolean
-  drawing (drawing: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
-  prompt (prompt: String, nextPlayer: Int, playerId: Int, gameHash: String): NextTurn
+  drawing (drawing: String, nextPlayer: Int, playerId: Int, gameHash: String): Turn
+  prompt (prompt: String, nextPlayer: Int, playerId: Int, gameHash: String): Turn
   endGame: [String]
 }
 
 type Subscription {
   playGame(id: String): PlayGame
+  nextTurn(playerId: Int): NextTurn
 }
 `;

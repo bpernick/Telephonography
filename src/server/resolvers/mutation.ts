@@ -40,6 +40,7 @@ export  const startGame = async (_: any, {gameHash}: any) => {
 
 export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, gameHash }: any) => { 
   try {
+    await addDrawing(drawing, playerId);
     const turn = await incrementTurn(playerId, gameHash);
     if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
@@ -52,12 +53,14 @@ export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, ga
       })
       return ({ turn })
     } else {
-      await addDrawing(drawing, nextPlayer, playerId);
-      const prompt = await getNextPrompt (playerId);
-      return ({
-        prompt,
-        turn,
-      });
+      await pubSub.publish('NEXT_TURN', {
+        nextTurn: { 
+          drawing,
+          turn,
+         },
+        playerId: nextPlayer,
+      })
+      return ({ turn });
     }
   } catch (err) {
     console.log ('addDrawing query error', err)
@@ -66,6 +69,7 @@ export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, ga
 
 export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gameHash }: any) => {
   try {
+    await addPrompt(prompt, playerId);
     const turn = await incrementTurn(playerId, gameHash);
     if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
@@ -78,14 +82,14 @@ export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gam
       })
       return ({ turn })
     } else {
-      await addPrompt(prompt, nextPlayer, playerId);
-      const drawing = await getNextDrawing (playerId);
-      const newPrompt = await getNextPrompt (playerId);
-      return ({
-        prompt: newPrompt,
-        drawing,
-        turn,
-      });
+      await pubSub.publish('NEXT_TURN', {
+        nextTurn: { 
+          prompt,
+          turn,
+         },
+        playerId: nextPlayer,
+      })
+      return ({ turn }); 
     }
   } catch (err) {
     console.log ('addDrawing query error', err)

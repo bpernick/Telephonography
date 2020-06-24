@@ -1,21 +1,8 @@
 import React, { useState, useEffect, ReactElement } from 'react'
-import { getOpts } from './graphqlHeaders'
-import { GamePage } from './GamePage'
-import { WaitingRoom } from './WaitingRoom'
-import { GameEnd } from './GameEnd'
-
-// const GQL = {
-//   CONNECTION_INIT: 'connection_init',
-//   CONNECTION_ACK: 'connection_ack',
-//   CONNECTION_ERROR: 'connection_error',
-//   CONNECTION_KEEP_ALIVE: 'ka',
-//   START: 'start',
-//   STOP: 'stop',
-//   CONNECTION_TERMINATE: 'connection_terminate',
-//   DATA: 'data',
-//   ERROR: 'error',
-//   COMPLETE: 'complete'
-// }
+import { getOpts } from './utils/graphqlHeaders'
+import { GamePage } from './game/GamePage'
+import { WaitingRoom } from './Waiting/WaitingRoom'
+import { GameEnd } from './gameEnd/GameEnd'
 
 export const GameRoom = ({ 
   gameHash,
@@ -84,7 +71,6 @@ export const GameRoom = ({
         }
 
         case 'data': {
-
           fetch('/graphql', getOpts(nextPlayerQuery))
             .then(data => data.json())
             .then (({ data }) => {

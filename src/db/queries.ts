@@ -85,49 +85,32 @@ export const getNumberOfPlayers = (gameHash: string): Promise<number> => {
     })
   })
 }
-export const addPrompt = (prompt: string, nextPlayerId: number, playerId: number): Promise<void> => {
-  const updateNextPlayer = 'update players set next_prompt = $1 where id = $2'
+export const addPrompt = (prompt: string, playerId: number): Promise<void> => {
   const updatePrompts = 'update drawings_and_prompts set prompts = array_append(prompts , $1) where player_id = $2'
   return new Promise ((resolve, reject) => {
-    pool.query(updateNextPlayer, [prompt, nextPlayerId], (err: Error) =>{
+    pool.query(updatePrompts, [prompt, playerId], (err: Error) =>{
       if (err) {
-        console.log('error sending drawing to next player')
+        console.log('error storing drawing')
         reject(err);
         return;
       }
-      pool.query(updatePrompts, [prompt, playerId], (err: Error) =>{
-        if (err) {
-          console.log('error storing drawing')
-          reject(err);
-          return;
-        }
-        resolve();
-      })
+      resolve();
     })
-  });
+  })
 }
 
-export const addDrawing = (drawing: string, nextPlayerId: number, playerId: number): Promise<void> => {
-  //add drawing to table and next player
-  const updateNextPlayer = 'update players set next_drawing = $1 where id = $2'
+export const addDrawing = (drawing: string, playerId: number): Promise<void> => {
   const updateDrawings = 'update drawings_and_prompts set drawings = array_append(drawings, $1) where player_id = $2'
   return new Promise ((resolve, reject) => {
-    pool.query(updateNextPlayer, [drawing, nextPlayerId], (err: Error) =>{
+    pool.query(updateDrawings, [drawing, playerId], (err: Error) =>{
       if (err) {
-        console.log('error sending drawing to next player')
+        console.log('error storing drawing')
         reject(err);
         return;
       }
-      pool.query(updateDrawings, [drawing, playerId], (err: Error) =>{
-        if (err) {
-          console.log('error storing drawing')
-          reject(err);
-          return;
-        }
-        resolve();
-      })
+      resolve();
     })
-  });
+  })
 }
 
 export const getNextPrompt = (playerId: number): Promise<string|null> => {

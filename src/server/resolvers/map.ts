@@ -1,4 +1,7 @@
-import {gamePlaySubscription} from './subscription'
+import {
+  gamePlaySubscription,
+  nextTurnSubscription,
+} from './subscription'
 import { 
   joinGame,
   startGame,
@@ -17,6 +20,9 @@ export const resolvers = {
   Subscription: {
     playGame: {
       subscribe: gamePlaySubscription,
+    },
+    nextTurn: {
+      subscribe: nextTurnSubscription,
     }
   },
   Query: {

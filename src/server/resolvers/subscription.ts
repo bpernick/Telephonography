@@ -9,3 +9,8 @@ export const gamePlaySubscription = withFilter(() => pubSub.asyncIterator('GAME_
   console.log("subscription called")
   return payload.playGame.id === variables.id;
 })
+
+export const nextTurnSubscription = withFilter(() => pubSub.asyncIterator('NEXT_TURN'), (payload, variables) => {
+  console.log("next turn listening")
+  return payload.playerId === variables.playerId;
+})

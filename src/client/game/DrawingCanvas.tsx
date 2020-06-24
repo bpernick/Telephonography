@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, ReactElement} from 'react'
+import React, {useRef, useEffect, ReactElement, MouseEventHandler} from 'react'
 
 export const DrawingCanvas = ({
   prompt,
@@ -51,11 +51,17 @@ export const DrawingCanvas = ({
     ctx.stroke();
   }
 
+  const handleClick = (e: React.MouseEvent) => {
+    const data = canvasRef.current.toDataURL()
+    console.log('sending base64 data')
+    submitDrawing(data)
+  }
   return (<>
-    <canvas ref = {canvasRef} onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
-    <button onClick= { onDelete }>{"Undo"}</button>
-    <button onClick= { onClear }>{"Clear"}</button>
-    <button>{"Submit"}</button>
+    <span>{prompt}</span>
+    <canvas ref={ canvasRef } onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
+    <button onClick={ onDelete }>{"Undo"}</button>
+    <button onClick={ onClear }>{"Clear"}</button>
+    <button onClick={ handleClick }>{"Submit"}</button>
   </>)
 }
 
