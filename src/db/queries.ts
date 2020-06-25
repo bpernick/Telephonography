@@ -1,6 +1,5 @@
 const {Client, Pool} = require ('pg');
-import { IPromptsAndDrawings } from './types'
-// insert into games (hash, how_many_players) values ('myhash', 1) on conflict (hash) do update set how_many_players = (select how_many_players from games where hash = 'myhash') + 1 returning how_many_players;
+
 
 const pool = new Pool ({
   host : process.env.HOSTNAME,
@@ -14,7 +13,6 @@ export const joinGame = (gameHash: string, name: string) => {
   console.log('env', process.env.USERNAME)
   const updateGame = 'insert into games (hash, how_many_players, players_left) values ($1, 1, 1) on conflict (hash) do update set how_many_players = (select how_many_players from games where hash = $1) + 1, players_left = (select players_left from games where hash = $1) + 1 returning how_many_players;'
   const insertPlayerQuery = 'insert into players (name, player_order, game_id) values ($1,$2,$3) returning id'
-  const insertDrawingsQuery = 'insert into drawings_and_prompts (player_id, game_id) values ($1,$2)'
   return new Promise ((resolve, reject) => {
     pool.query(updateGame,[gameHash], (err: Error, order: any) => {
       if (err) {
@@ -30,16 +28,10 @@ export const joinGame = (gameHash: string, name: string) => {
         }
         const playerUniqueId = insertPlayerResult.rows[0]['id'];
         console.log(`inserted player ${playerUniqueId}`)
-        pool.query (insertDrawingsQuery, [playerUniqueId, gameHash], (err: Error) => {
-          if (err) {
-            reject (err);
-            return;
-          }
-          resolve ({
-            playerOrder,
-            playerUniqueId,
-          });
-        })
+        resolve ({
+          playerOrder,
+          playerUniqueId,
+        });
       })
     })
   })
@@ -54,6 +46,20 @@ export const startGameQuery = (hash: string): Promise<number> => {
         return;
       }
       resolve(result.rows[0]['how_many_players']);
+    })
+  })
+}
+
+export const getOrderById = (playerId: number): Promise<number> => {
+  const query = 'select player_order from players where id = $1'
+  return new Promise ((resolve, reject) => {
+    pool.query(query, [playerId], (err: Error, results: any) =>{
+      if (err) {
+        console.log('error storing drawing')
+        reject(err);
+        return;
+      }
+      resolve(results.rows[0].player_order);
     })
   })
 }
@@ -85,10 +91,11 @@ export const getNumberOfPlayers = (gameHash: string): Promise<number> => {
     })
   })
 }
-export const addPrompt = (prompt: string, playerId: number): Promise<void> => {
-  const updatePrompts = 'update drawings_and_prompts set prompts = array_append(prompts , $1) where player_id = $2'
+export const addPrompt = (prompt: string, order: number, gameHash: string, playerId: number): Promise<void> => {
+  const updatePrompts = 'insert into drawings_and_prompts (game_id, starting_player_order, player_id, responses) values ($1,$2,$3,$4) on conflict (player_id) do update set responses = array_append((select responses from drawings_and_prompts where starting_player_order = $2 and game_id = $1) , $5) where drawings_and_prompts.starting_player_order = $2 and drawings_and_prompts.game_id = $1'
+
   return new Promise ((resolve, reject) => {
-    pool.query(updatePrompts, [prompt, playerId], (err: Error) =>{
+    pool.query(updatePrompts, [gameHash, order, playerId,`{${prompt}}`, prompt], (err: Error, response: any) =>{
       if (err) {
         console.log('error storing drawing')
         reject(err);
@@ -99,10 +106,12 @@ export const addPrompt = (prompt: string, playerId: number): Promise<void> => {
   })
 }
 
-export const addDrawing = (drawing: string, playerId: number): Promise<void> => {
-  const updateDrawings = 'update drawings_and_prompts set drawings = array_append(drawings, $1) where player_id = $2'
+export const addDrawing = (drawing: string, order: number, gameHash: string, playerId: number): Promise<void> => {
+  const updateDrawings = 'insert into drawings_and_prompts (game_id, starting_player_order, player_id, responses) values ($1,$2,$3,$4) on conflict (player_id) do update set responses = array_append((select responses from drawings_and_prompts where starting_player_order = $2 and game_id = $1) , $5) where drawings_and_prompts.starting_player_order = $2 and drawings_and_prompts.game_id = $1'
+
+
   return new Promise ((resolve, reject) => {
-    pool.query(updateDrawings, [drawing, playerId], (err: Error) =>{
+    pool.query(updateDrawings, [gameHash, order, playerId, `{${drawing}}`, drawing], (err: Error) =>{
       if (err) {
         console.log('error storing drawing')
         reject(err);
@@ -113,52 +122,16 @@ export const addDrawing = (drawing: string, playerId: number): Promise<void> => 
   })
 }
 
-export const getNextPrompt = (playerId: number): Promise<string|null> => {
-  const query = 'select next_prompt from players where id = $1'
-  const update = 'update players set next_prompt = null where id = $1'
+export const getNextPlayer = (playerId: number): Promise<number> => {
+  const query = 'select player_order from players where id = $1'
   return new Promise ((resolve, reject) => {
-    pool.query(query, [playerId], (err: Error, promptArr: any) => {
+    pool.query(query, [playerId], (err: Error, results: any) =>{
       if (err) {
-        reject (err);
-        return;
-      } 
-      const prompt = promptArr[0];
-      if (!prompt) {
-        resolve (null);
+        console.log('error storing drawing')
+        reject(err);
         return;
       }
-      pool.query(update, [playerId], (err: Error) => {
-        if (err) {
-          reject (err);
-          return;
-        }
-        resolve(prompt);
-      })
-    })
-  })
-}
-
-export const getNextDrawing = (playerId: number): Promise<string|null> => {
-  const query = 'select next_drawing from players where id = $1'
-  const update = 'update players set next_drawing = null where id = $1'
-  return new Promise ((resolve, reject) => {
-    pool.query(query, [playerId], (err: Error, drawingArr: any) => {
-      if (err) {
-        reject (err);
-        return;
-      } 
-      const drawing = drawingArr[0];
-      if (!drawing) {
-        resolve (null);
-        return;
-      }
-      pool.query(update, [playerId], (err: Error) => {
-        if (err) {
-          reject (err);
-          return;
-        }
-        resolve(drawing);
-      })
+      resolve(results.rows[0].player_order);
     })
   })
 }
@@ -194,7 +167,7 @@ export const incrementTurn = (playerId: number, gameHash: string): Promise<numbe
           return;
         }
         //if last turn has been completed, set turn to -1. Otherwise, increment it
-        const turn: number = result.rows[0].turn_number >= players ? -1 : result.rows[0].turn_number + 1;
+        const turn: number = result.rows[0].turn_number + 1;
         console.log(turn)
         pool.query(updateTurn, [turn, playerId], (err: Error, result: any) => {
           if (err) {
@@ -221,15 +194,15 @@ export const decrementPlayersLeft = (gameHash: string): Promise<number> => {
   })
 }
 
-export const getAllPromptsAndDrawings = (gameHash: string): Promise<IPromptsAndDrawings> => {
-  const query = 'select drawings, prompts from drawings_and_prompts where game_id = $1'
+export const getAllPromptsAndDrawings = (gameHash: string): Promise<any> => {
+  const query = 'select responses from drawings_and_prompts where game_id = $1 order by starting_player_order asc'
   return new Promise ((resolve, reject) => {
     pool.query(query, [gameHash], (err: Error, result: any) => {
       if (err) {
         reject(err);
         return;
       }
-      resolve(result.rows[0]);
+      resolve(result.rows);
     })
   })
 }

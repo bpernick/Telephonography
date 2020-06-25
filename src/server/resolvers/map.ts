@@ -11,8 +11,6 @@ import {
 } from './mutation';
 import { 
   randomId,
-  prompt,
-  drawing,
   nextPlayer,
 } from './query';
 
@@ -27,8 +25,6 @@ export const resolvers = {
   },
   Query: {
     randomId,
-    prompt,
-    drawing,
     nextPlayer,
   },
   Mutation: {

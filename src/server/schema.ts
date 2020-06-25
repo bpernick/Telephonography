@@ -14,12 +14,12 @@ type NextTurn {
 }
 
 type FinalAnswers {
-  drawings: [String]
-  prompts: [String]
+  drawing: String
+  prompt: String
 }
 
 type PlayGame {
-  finalAnswers: FinalAnswers
+  finalAnswers: [FinalAnswers]
   prompts: [String]
   id: String
   gameStatus: String
@@ -30,8 +30,6 @@ type Turn {
 }
 
 type Query {
-  drawing: String
-  prompt: String
   randomId: String
   nextPlayer(playerOrder: Int, gameId: String): Int
 }

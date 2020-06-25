@@ -18,17 +18,20 @@ CREATE TABLE players (
   score SMALLINT DEFAULT 0 NOT NULL,
   turn_number SMALLINT DEFAULT 0 NOT NULL,
   game_id VARCHAR (255) NOT NULL,
-  next_drawing bytea,
-  next_prompt VARCHAR(255),
+  next_player SMALLINT,
   FOREIGN KEY (game_id) REFERENCES games (hash)
 );
 
 CREATE TABLE drawings_and_prompts (
   id SERIAL NOT NULL PRIMARY KEY,
-  drawings bytea[],
-  prompts VARCHAR(255)[],
-  player_id INT NOT NULL,
+  responses TEXT [],
+  starting_player_order INT NOT NULL,
   game_id VARCHAR (255) NOT NULL,
+  player_id SMALLINT,
   FOREIGN KEY (player_id) REFERENCES players (id),
-  FOREIGN KEY (game_id) REFERENCES games (hash)
+  FOREIGN KEY (game_id) REFERENCES games (hash),
+  UNIQUE (player_id, game_id)
 );
+
+
+CREATE UNIQUE INDEX asdf ON drawings_and_prompts (player_id);

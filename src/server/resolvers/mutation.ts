@@ -3,17 +3,17 @@ import {
   joinGame as joinGameQuery,
   addDrawing,
   addPrompt,
-  getNextDrawing,
-  getNextPrompt,
+  getOrderById,
+  getNumberOfPlayers,
   incrementTurn,
   decrementPlayersLeft,
-  getAllPromptsAndDrawings,
+  getUniqueIdFromOrder,
 } from '../../db/queries'
-import { pubSub } from './pubSub'
-import { getRandomPrompts } from '../randomPrompts'
+// import { pubSub } from './pubSub'
+import { publishGameStart, publishGameEnd, publishNextTurn } from './publish'
+// import { getRandomPrompts } from '../randomPrompts'
 
 export  const joinGame = async (_: any, {name, gameHash}: any) => {
-  console.log ('joingame', name, gameHash )
   try {
     const playerInfo = await joinGameQuery(gameHash, name);
     return playerInfo;
@@ -24,14 +24,7 @@ export  const joinGame = async (_: any, {name, gameHash}: any) => {
 export  const startGame = async (_: any, {gameHash}: any) => {
   try {
     const numberOfPlayers = await startGameQuery (gameHash);
-    await pubSub.publish(`GAME_STARTED`, { 
-      playGame: {
-        prompts: getRandomPrompts(numberOfPlayers), 
-        id: gameHash, 
-        gameStatus: 'STARTED',
-      },
-      id: gameHash
-    })
+    await publishGameStart (gameHash, numberOfPlayers);
     return true;
   } catch (err) {
     console.log ('startGame query error', err)
@@ -40,26 +33,21 @@ export  const startGame = async (_: any, {gameHash}: any) => {
 
 export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, gameHash }: any) => { 
   try {
-    await addDrawing(drawing, playerId);
-    const turn = await incrementTurn(playerId, gameHash);
+    let turn = await incrementTurn(playerId, gameHash);
+    const order = await getOrderById(playerId);
+    const players = await getNumberOfPlayers(gameHash);
+    const originOrder = ((order + (turn - 1)) % players) === 0 ? players : ((order + (turn - 1)) % players)
+    console.log("originOrder", originOrder, "turn", turn, "order", order, "players", players )
+    const originPlayer = await getUniqueIdFromOrder (originOrder, gameHash);
+    turn = turn > players ? -1 : turn;
+    
+    await addDrawing(drawing, originOrder, gameHash, originPlayer);
     if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
-      playersLeft === 0 && await pubSub.publish(`GAME_STARTED`, { 
-        playGame: {
-          finalAnswers: await getAllPromptsAndDrawings(gameHash),
-          id: gameHash, 
-          gameStatus: 'ENDGAME',
-        },
-      })
+      playersLeft === 0 && await publishGameEnd(gameHash);
       return ({ turn })
     } else {
-      await pubSub.publish('NEXT_TURN', {
-        nextTurn: { 
-          drawing,
-          turn,
-         },
-        playerId: nextPlayer,
-      })
+      await publishNextTurn({drawing, turn, nextPlayer});
       return ({ turn });
     }
   } catch (err) {
@@ -69,30 +57,26 @@ export  const submitDrawing = async (_: any, { drawing, nextPlayer, playerId, ga
 
 export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gameHash }: any) => {
   try {
-    await addPrompt(prompt, playerId);
-    const turn = await incrementTurn(playerId, gameHash);
+    console.log('submit prompt', prompt)
+    let turn = await incrementTurn(playerId, gameHash);
+    const order = await getOrderById(playerId);
+    const players = await getNumberOfPlayers(gameHash);
+    const originOrder = ((order + (turn - 1)) % players) === 0 ? players : ((order + (turn - 1)) % players);
+    console.log("originOrder", originOrder, "turn", turn, "order", order, "players", players )
+    const originPlayer = await getUniqueIdFromOrder (originOrder, gameHash);
+    turn = turn > players ? -1 : turn;
+    
+    await addPrompt(prompt, originOrder, gameHash, originPlayer);
     if (turn === -1) {
       const playersLeft = await decrementPlayersLeft(gameHash);
-      playersLeft === 0 && await pubSub.publish(`GAME_STARTED`, { 
-        playGame: {
-          finalAnswers: await getAllPromptsAndDrawings(gameHash),
-          id: gameHash, 
-          gameStatus: 'ENDGAME',
-        },
-      })
+      playersLeft === 0 && await publishGameEnd(gameHash);
       return ({ turn })
     } else {
-      await pubSub.publish('NEXT_TURN', {
-        nextTurn: { 
-          prompt,
-          turn,
-         },
-        playerId: nextPlayer,
-      })
+      await publishNextTurn({prompt, turn, nextPlayer});
       return ({ turn }); 
     }
   } catch (err) {
-    console.log ('addDrawing query error', err)
+    console.log ('addCaption query error', err)
   }
 }
 

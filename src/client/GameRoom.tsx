@@ -3,6 +3,7 @@ import { getOpts } from './utils/graphqlHeaders'
 import { GamePage } from './game/GamePage'
 import { WaitingRoom } from './Waiting/WaitingRoom'
 import { GameEnd } from './gameEnd/GameEnd'
+import { PlayAgain } from './gameEnd/PlayAgain'
 
 export const GameRoom = ({ 
   gameHash,
@@ -13,17 +14,14 @@ export const GameRoom = ({
   const [nextPlayer, setNextPlayer] = useState(-1);
   const [gameStatus, setGameStatus] = useState('PENDING');
   const [prompts, setPrompts] = useState([]);
-  const [finalAnswers, setFinalAnswers] = useState({
-    drawings:[],
-    prompts:[],
-  });
+  const [finalAnswers, setFinalAnswers] = useState([]);
 
   const playGameQuery = `
     subscription {
       playGame (id: "${gameHash}") {
         finalAnswers {
-          drawings
-          prompts
+          drawing
+          prompt
         }
         id
         gameStatus
@@ -67,6 +65,7 @@ export const GameRoom = ({
         }
 
         case 'ka': {
+          console.log("live from the game room")
           break;
         }
 
@@ -98,7 +97,8 @@ export const GameRoom = ({
   <div>
     <>{ gameStatus === 'PENDING' && <WaitingRoom playerOrder = { playerOrder } gameHash = {gameHash}/> }</>
     <>{ gameStatus === 'STARTED' && <GamePage prompts = { prompts } gameHash = { gameHash } playerId = { playerId } nextPlayer = { nextPlayer } /> }</>
-    <>{ gameStatus === 'ENDGAME' && <GameEnd/> }</>
+    <>{ gameStatus === 'ENDGAME' && <GameEnd finalAnswers = { finalAnswers }/> }</>
+    <>{ gameStatus === 'FINISHED' && <PlayAgain/>}</>
   </div>)
 }
 

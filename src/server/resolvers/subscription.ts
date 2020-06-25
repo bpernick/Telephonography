@@ -7,7 +7,7 @@ import { withFilter } from 'graphql-subscriptions'
 
 export const gamePlaySubscription = withFilter(() => pubSub.asyncIterator('GAME_STARTED'), (payload, variables) => {
   console.log("subscription called")
-  return payload.playGame.id === variables.id;
+  return payload.id === variables.id;
 })
 
 export const nextTurnSubscription = withFilter(() => pubSub.asyncIterator('NEXT_TURN'), (payload, variables) => {

@@ -34,6 +34,7 @@ export const GamePage = ({
   }
 
   const submitPrompt = (promptData: string) => {
+    console.log(promptData)
     const promptMutation = `
       mutation {
         prompt (prompt: "${promptData}", playerId: ${playerId}, nextPlayer: ${nextPlayer}, gameHash: "${gameHash}"){
