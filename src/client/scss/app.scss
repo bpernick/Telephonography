@@ -1,5 +1,59 @@
-$theme-colors: (
-    'primary': #0091ea //Covalence Blue!  :D
-);
+// $theme-colors: (
+//     'primary': #0091ea //Covalence Blue!  :D
+// );
 
-@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+// @import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+body {
+  p {
+    margin-block-start: .5em;
+    margin-block-end: .5em;
+  }
+  background-color: green;
+  font-size: 30px;
+  font-family: sans-serif;
+  .title {
+    font-family: Bradley Hand;
+    font-size: 100px;
+  }
+  .main {
+    display: grid;
+    justify-items: center;
+    color: white;
+  }
+  .button {
+    display: inline-block;
+    border: 2px solid white;
+    padding: 0px 7px 1.5px;
+    border-radius: 10px;
+    border-color: white;
+    cursor: pointer;
+  }
+  .input {
+    color: green;
+    padding-left: 10px;
+    justify-items: center;
+    font-size: 20px;
+    height: 30px;
+    width: 250px;
+    margin-left: 5px;
+    border-radius: 10px;
+    border-radius: 10px;
+    border-color: white;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
+.login {
+  display: grid;
+  grid-template-columns: .5fr 1fr .5fr;
+  .form {
+    margin-block-end: 1em;
+  }
+}
+
+.host-waiting {
+  display: grid;
+  grid-template-columns: .5fr 1fr .5fr;
+}

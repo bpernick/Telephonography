@@ -12,13 +12,17 @@ export const HostWaitingPage = ({
     `
     fetch('/graphql', getOpts(mutation))
   }
-  return (<>
-    <p>Telephonography</p>
-    <p>{`Your code is ${gameHash}`}</p>
-    <p>Wait for all your guests to sign in</p>
-    <p>And then...</p>
-    <button onClick ={ startGame }> Start Game! </button>
-  </>)
+  return (<div className="host-waiting">
+    <div/>
+    <h2 className="title">Telephonography</h2>
+    <div className="main">
+      <p>{`Your code is ${gameHash}`}</p>
+      <p>Wait for all your guests to sign in</p>
+      <p>And then...</p>
+      <span className="button" onClick ={ startGame }> Start Game! </span>
+    </div>
+    <div/>
+  </div>)
 };
 
 export interface HostWaitingPageProps {
