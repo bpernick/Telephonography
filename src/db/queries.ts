@@ -207,6 +207,33 @@ export const getAllPromptsAndDrawings = (gameHash: string): Promise<any> => {
   })
 }
 
-export const resetGame = () => {
-  
+export const resetGame = (gameHash: string): Promise<void> => {
+   const gameQuery = 'update games set players_left = 0 where hash = $1';
+   const playerQuery = 'update players set players_left = 0 where game_id = $1';
+   const responseQuery ='update drawings_and_prompts set responses = "{}" where game_id = $1'
+   return new Promise ((resolve, reject) => {
+    pool.query(gameQuery, [gameHash], (err: Error, result: any) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      pool.query(playerQuery, [gameHash], (err: Error, result: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        pool.query(responseQuery, [gameHash], (err: Error, result: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve();
+        })
+      })
+    })
+  })
 }
+
+// players_left
+//turn_number 
+//responses

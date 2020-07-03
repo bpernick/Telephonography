@@ -3,7 +3,7 @@ import { getOpts } from '../utils/graphqlHeaders'
 import { DrawingCanvas } from './DrawingCanvas'
 import { ChooseInitialCaption } from './ChooseInitialCaption'
 import { CaptionCanvas } from './CaptionCanvas'
-import { Waiting } from '../waiting/Waiting'
+import { Waiting } from '../waitingRooms/Waiting'
 
 export const GamePage = ({
   gameHash,
@@ -17,6 +17,9 @@ export const GamePage = ({
   const [nextPrompt, setNextPrompt] = useState('');
   const [nextDrawing, setNextDrawing] = useState('');
 
+  useEffect(() => {
+    
+  });
 
   const submitDrawing = (base64data: string) => {
     const drawingMutation = `
@@ -94,7 +97,7 @@ export const GamePage = ({
           console.log('drawing from server', result.drawing)
           result.prompt && setNextPrompt(result.prompt);
           result.drawing && setNextDrawing(result.drawing);
-          setNextTurn(result.turn)
+          setNextTurn(result.turn);
           break;
         }
 
@@ -104,6 +107,12 @@ export const GamePage = ({
         }
       }
     })
+    // return () => {
+    //   nexTurnSocket.send(JSON.stringify({
+    //     type: 'connection_terminate'
+    //   }))
+    //   nexTurnSocket.close()
+    // }
   }, [])
   const chooseComponent = (): ReactElement => {
     if (turn === -1) {

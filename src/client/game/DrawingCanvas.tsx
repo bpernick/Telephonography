@@ -15,9 +15,10 @@ export const DrawingCanvas = ({
   })
 
   const setPosition = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
-    posx = event.clientX;
+    const rect = canvasRef.current.getBoundingClientRect();
+    posx = event.clientX - rect.left;
     //accounts for mouse offset
-    posy = event.clientY - 20;
+    posy = event.clientY - rect.top;
   }
 
   const mouseUp = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
@@ -57,11 +58,20 @@ export const DrawingCanvas = ({
     submitDrawing(data)
   }
   return (<>
-    <span>{prompt}</span>
-    <canvas ref={ canvasRef } onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
-    <button onClick={ onDelete }>{"Undo"}</button>
-    <button onClick={ onClear }>{"Clear"}</button>
-    <button onClick={ handleClick }>{"Submit"}</button>
+    <div className="room">
+      <div/>
+      <div className="main">
+      <h2 className="title">Draw the prompt!</h2>
+        <span className="prompt">{prompt}</span>
+        <canvas className="canvas" ref={ canvasRef } onMouseDown ={setPosition} onMouseUp ={mouseUp} onMouseMove = {mouseMove} width="500" height="500"></canvas>
+        <div className="drawing_buttons">
+          <span className="button" onClick={ onDelete }>{"Undo"}</span>
+          <span className="button" onClick={ onClear }>{"Clear"}</span>
+          <span className="button" onClick={ handleClick }>{"Submit"}</span>
+        </div>
+      </div>
+      <div/>
+    </div>
   </>)
 }
 

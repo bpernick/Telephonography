@@ -9,13 +9,13 @@ export const Login = ({
   gameHash,
 }: LoginProps ): ReactElement  => {
   
-  return (<div className="login">
+  return (<div className="room">
       <div/>
       <div className="main">
-        <h2 className="title">Telephongraphy</h2>
-        <p>If you want to start a new game, <span className = "button get-id" onClick={ getIdButtonClick }> generate a new code! </span></p>
+        <h2 className="title">Telephonography</h2>
+        <p>If you want to start a new game, <span className = "button get-id" onClick={ getIdButtonClick }> get a code! </span></p>
         <p>Otherwise, wait for your host to send a code.</p>
-          <p className="form">
+          <p className="before-button">
           <div>
             <label htmlFor="name">Name:</label>
             <input className = "input name" type="text" name="name" value= { name } onChange={(e)=>{onChangeName(e.target.value)}}></input>

@@ -1,8 +1,4 @@
-// $theme-colors: (
-//     'primary': #0091ea //Covalence Blue!  :D
-// );
 
-// @import '../../../node_modules/bootstrap/scss/bootstrap.scss';
 body {
   p {
     margin-block-start: .5em;
@@ -14,6 +10,9 @@ body {
   .title {
     font-family: Bradley Hand;
     font-size: 100px;
+    margin-block-end: 0.1em;
+    text-align: center;
+    text-justify: center;
   }
   .main {
     display: grid;
@@ -22,10 +21,11 @@ body {
   }
   .button {
     display: inline-block;
-    border: 2px solid white;
+    border: 1.5px solid white;
     padding: 0px 7px 1.5px;
     border-radius: 10px;
     border-color: white;
+    margin: .5em;
     cursor: pointer;
   }
   .input {
@@ -43,13 +43,27 @@ body {
     -moz-box-shadow: none;
     box-shadow: none;
   }
+  .caption_canvas_input {
+    margin-top: 1em;
+    margin-bottom: .5em;
+  }
+  .prompt {
+    margin: 1em;
+  }
 }
-
-.login {
+.room {
   display: grid;
   grid-template-columns: .5fr 1fr .5fr;
-  .form {
+  .before-button {
     margin-block-end: 1em;
+  }
+  .prompts {
+    display: grid;
+    justify-items: center;
+  }
+  .canvas {
+    background-color: white;
+    color: black;
   }
 }
 

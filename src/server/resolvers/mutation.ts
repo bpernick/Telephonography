@@ -8,6 +8,7 @@ import {
   incrementTurn,
   decrementPlayersLeft,
   getUniqueIdFromOrder,
+  resetGame as resetGameQuery,
 } from '../../db/queries'
 // import { pubSub } from './pubSub'
 import { publishGameStart, publishGameEnd, publishNextTurn } from './publish'
@@ -80,6 +81,7 @@ export  const submitCaption = async (_: any, { prompt, nextPlayer, playerId, gam
   }
 }
 
-export  const endGame = async (_: any, {id}: any) => {
-  
+export  const resetGame = async (_: any, {id}: any) => {
+  await resetGameQuery (id);
+  return null;
 }

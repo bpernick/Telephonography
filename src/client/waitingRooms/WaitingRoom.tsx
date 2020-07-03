@@ -7,7 +7,7 @@ export const WaitingRoom = ({
   playerOrder,
   gameHash,
 }: WaitingRoomProps): ReactElement => {
-  return (<>{ playerOrder === 1 ? <HostWaitingPage gameHash = {gameHash} /> : <Waiting godot = "your host to start the game"/> }</>)
+  return (<div>{ playerOrder === 1 ? <HostWaitingPage gameHash = {gameHash} /> : <Waiting godot = "your host to start the game"/> }</div>)
 };
 
 export interface WaitingRoomProps {

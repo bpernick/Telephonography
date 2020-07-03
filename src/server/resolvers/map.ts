@@ -7,7 +7,7 @@ import {
   startGame,
   submitDrawing,
   submitCaption,
-  endGame,
+  resetGame,
 } from './mutation';
 import { 
   randomId,
@@ -32,6 +32,6 @@ export const resolvers = {
     startGame,
     drawing: submitDrawing,
     prompt: submitCaption,
-    endGame,
+    resetGame,
   }
 }

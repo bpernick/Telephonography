@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactElement } from 'react'
 import { getOpts } from './utils/graphqlHeaders'
 import { GamePage } from './game/GamePage'
-import { WaitingRoom } from './Waiting/WaitingRoom'
+import { WaitingRoom } from './waitingRooms/WaitingRoom'
 import { GameEnd } from './gameEnd/GameEnd'
 import { PlayAgain } from './gameEnd/PlayAgain'
 
@@ -16,6 +16,16 @@ export const GameRoom = ({
   const [prompts, setPrompts] = useState([]);
   const [finalAnswers, setFinalAnswers] = useState([]);
 
+  const newGameClickHandler = (): void => {
+    const newGameMutation = `
+    mutation {
+      resetGame (id: "${gameHash}")
+    }
+    `
+    setGameStatus('PENDING');
+    fetch('/graphql', getOpts(newGameMutation))
+      .then(() => { console.log('success') })
+  }
   const playGameQuery = `
     subscription {
       playGame (id: "${gameHash}") {
@@ -91,6 +101,12 @@ export const GameRoom = ({
         }
       }
     })
+    // return () => {
+    //   playGameSocket.send(JSON.stringify({
+    //     type: 'connection_terminate'
+    //   }))
+    //   playGameSocket.close()
+    // }
   }, [])
 
   return (
@@ -98,7 +114,7 @@ export const GameRoom = ({
     <>{ gameStatus === 'PENDING' && <WaitingRoom playerOrder = { playerOrder } gameHash = {gameHash}/> }</>
     <>{ gameStatus === 'STARTED' && <GamePage prompts = { prompts } gameHash = { gameHash } playerId = { playerId } nextPlayer = { nextPlayer } /> }</>
     <>{ gameStatus === 'ENDGAME' && <GameEnd finalAnswers = { finalAnswers }/> }</>
-    <>{ gameStatus === 'FINISHED' && <PlayAgain/>}</>
+    <>{ gameStatus === 'FINISHED' && <PlayAgain handleClick = {newGameClickHandler}/>}</>
   </div>)
 }
 

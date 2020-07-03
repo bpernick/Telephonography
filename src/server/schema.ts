@@ -40,6 +40,7 @@ type Mutation {
   drawing (drawing: String, nextPlayer: Int, playerId: Int, gameHash: String): Turn
   prompt (prompt: String, nextPlayer: Int, playerId: Int, gameHash: String): Turn
   endGame: [String]
+  resetGame (id: String): Boolean
 }
 
 type Subscription {

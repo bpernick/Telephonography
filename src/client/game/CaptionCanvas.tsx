@@ -10,10 +10,18 @@ export const CaptionCanvas = ({
     submitPrompt(prompt);
   }
   return (
-    <div>
-      <input type="text" onChange={(e) =>{setPrompt(e.target.value)}}></input>
-      <img src={drawing}></img>
-      <button onClick={handleClick}>Submit</button>
+    <div className="room">
+      <div/>
+        <div className="main">
+          <h2 className="title">What do you think this is?</h2>
+          <img className="canvas" src={drawing}></img>
+          <div>
+            <span>What is it?</span>
+            <input className="input caption_canvas_input" type="text" onChange={(e) =>{setPrompt(e.target.value)}}></input>
+          </div>
+          <span className="button" onClick={handleClick}>Submit</span>
+        </div>
+      <div/>
     </div>)
 }
 export interface CaptionCanvasProps {

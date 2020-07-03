@@ -3,9 +3,15 @@ import React, { ReactElement } from "react";
 export const GameEnd = ({
   finalAnswers
 }: GameEndProps ): ReactElement => {
-return (<div>{finalAnswers.map((answer: IFinalAnswers, i: number) => {
-return(<div><span>{answer.prompt}</span><>{!!answer.drawing && <img src={answer.drawing}></img>}</></div>)
-})}</div>)
+return (<div className="room">
+  <div/>
+  <div className="main">
+    <div>{finalAnswers.map((answer: IFinalAnswers, i: number) => {
+    return(<div className="main"><span>{answer.prompt}</span><>{!!answer.drawing && <img className="canvas" src={answer.drawing}></img>}</></div>)
+    })}</div>
+    </div>
+  <div/>
+</div>)
 };
 
 export interface GameEndProps {

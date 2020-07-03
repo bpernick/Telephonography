@@ -4,10 +4,17 @@ export const ChooseInitialCaption = ({
   prompts,
   submitPrompt,
 }: ChooseInitialCaptionPrompts): ReactElement => {
-  return (<div>{
-    prompts.map((prompt, i) => {
-      return(<span key = {i} onClick = {(e) => {submitPrompt(e.currentTarget.innerHTML)}} >{prompt}</span>)
-    })}</div>
+  return (
+    <div className="room">
+      <div/>
+      <div className="main">
+        <h2 className="title">Choose a prompt!</h2>
+        <div className="prompts">{
+          prompts.map((prompt, i) => {
+            return(<><span className = "button" key = {i} onClick = {(e) => {submitPrompt(e.currentTarget.innerHTML)}} >{prompt}</span><br/></>)
+          })}</div>
+        </div>
+    </div>
   )
 }
 
