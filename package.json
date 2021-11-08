@@ -20,7 +20,7 @@
     "@types/react-dom": "^16.9.8",
     "apollo-client": "^2.6.10",
     "apollo-fetch": "^0.7.0",
-    "apollo-server": "^2.14.3",
+    "apollo-server": "^2.25.3",
     "apollo-server-express": "^2.14.3",
     "base64-arraybuffer": "^0.2.0",
     "bootstrap": "^4.5.0",
