@@ -32,7 +32,7 @@
     "graphql": "^15.1.0",
     "graphql-request": "^2.0.0",
     "graphql-subscriptions": "^1.1.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "pg": "^8.2.1",
     "qs-middleware": "^1.0.3",
     "react": "^16.12.0",
